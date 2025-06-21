@@ -1,7 +1,9 @@
 import time
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 
+import chinese_calendar as cal
 import pandas as pd
+import requests
 import tushare as ts
 from tenacity import retry, stop_after_attempt, wait_fixed, retry_if_exception_type
 
@@ -112,7 +114,19 @@ def main(start_date, end_date):
     save_stock_daily(stock_codes, start_date=start, end_date=end)
 
 
+def is_workday_robust(target_date: date) -> bool:
+    try:
+        # 优先使用本地库
+        return cal.is_workday(target_date)
+    except Exception:
+        # 库数据过期时回退到 API
+        api_url = f"https://timor.tech/api/holiday/info/{target_date}"
+        return requests.get(api_url).json()['type']['type'] == 0
+
+
 if __name__ == '__main__':
-    main(None  , None)
-    print("采集完成")
-    print(datetime.now().strftime("%Y%m%d"))
+    if is_workday_robust(date.today()):
+        main(None, None)
+        print("采集完成")
+    else:
+        print("法定节假日不需要同步")
