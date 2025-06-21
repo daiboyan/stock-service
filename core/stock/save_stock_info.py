@@ -1,14 +1,11 @@
-import os
-import random
-import sys
 import time
+from datetime import datetime, timedelta
 
 import pandas as pd
 import tushare as ts
-from apscheduler.schedulers.blocking import BlockingScheduler
-from datetime import datetime, timedelta
-from core.utils.db.mysql_engine import MysqlEngine
 from tenacity import retry, stop_after_attempt, wait_fixed, retry_if_exception_type
+
+from core.utils.db.mysql_engine import MysqlEngine
 
 # 设置Tushare Token（需前往tushare.pro官网注册获取）
 TOKEN = 'd03158c0aa9704114b3114aeee70ab0b160b3648d01a73f88db9d23d'  # 替换为你的实际token
@@ -85,7 +82,7 @@ def save_stock_daily(stock_list, start_date, end_date):
 # 带异常过滤
 @retry(
     stop=stop_after_attempt(3),
-    wait=wait_fixed(100),
+    wait=wait_fixed(300),
     retry=retry_if_exception_type(ConnectionError),
     reraise=True  # 重试后仍失败则抛出原始异常
 )
@@ -103,12 +100,12 @@ def list_stock_codes():
 
 def main(start_date, end_date):
     # 增量更新股票
-    # try:
-    #     print("开始采集股票基础信息")
-    #     save_gp_basic()
-    #     print("股票基础信息采集完成")
-    # except Exception as e:
-    #     print(e)
+    try:
+        print("开始采集股票基础信息")
+        save_gp_basic()
+        print("股票基础信息采集完成")
+    except Exception as e:
+        print(e)
 
     # 爬当天的日线数据
     start = start_date if start_date is not None else datetime.now().strftime("%Y%m%d")
@@ -119,21 +116,5 @@ def main(start_date, end_date):
 
 
 if __name__ == '__main__':
-    main(20230101, 20250620)
-    # # 创建调度器
-    # scheduler = BlockingScheduler()
-    #
-    # # 添加每日下午5点执行的任务
-    # scheduler.add_job(
-    #     main(),
-    #     'cron',  # 使用cron表达式
-    #     hour=17,  # 17点（24小时制）
-    #     minute=0,  # 0分
-    #     second=0  # 0秒
-    # )
-    #
-    # print("调度器已启动，每天下午5点执行任务...")
-    # try:
-    #     scheduler.start()
-    # except (KeyboardInterrupt, SystemExit):
-    #     print("程序已退出")
+    main(None  , None)
+    print("采集完成")

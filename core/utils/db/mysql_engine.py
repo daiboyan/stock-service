@@ -1,7 +1,8 @@
+from urllib.parse import quote_plus
+
+import pandas as pd
 from pymysql.err import OperationalError, ProgrammingError
 from sqlalchemy import create_engine, text
-import pandas as pd
-from urllib.parse import quote_plus
 
 
 def optimize_dtypes(df):
