@@ -56,9 +56,6 @@ def save_stock_daily(stock_list, start_date, end_date):
 
     times = 1
     for code in new_list:
-        # 表里没有的直接初始化
-        if code not in ts_codes:
-            start_date = '20230101'
         # 查询接口
         df = pro.daily(
             ts_code=code,
@@ -118,3 +115,4 @@ def main(start_date, end_date):
 if __name__ == '__main__':
     main(None  , None)
     print("采集完成")
+    print(datetime.now().strftime("%Y%m%d"))
