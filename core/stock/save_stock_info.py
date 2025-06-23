@@ -1,3 +1,4 @@
+#!/root/stock/stock-service/venv/bin/python3
 import time
 from datetime import datetime, timedelta, date
 
@@ -88,7 +89,6 @@ def save_stock_daily(stock_list, start_date, end_date):
 def list_stock_codes():
     # 获取日线数据
     t = datetime.now().strftime("%Y-%m-%d") + " 00:00:00"
-    t = '2025-06-16 00:00:00'
     sql = f"SELECT * FROM stock_basic_info where ts_code not in (select ts_code from stock_daily sbi where trade_date >= '{t}' group by ts_code)"
     print(sql)
     df = MysqlEngine.query_to_dataframe(sql)
