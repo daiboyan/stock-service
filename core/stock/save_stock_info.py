@@ -49,16 +49,16 @@ def save_stock_daily(stock_list, start_date, end_date):
     start_date = start_date if start_date else (datetime.now() - timedelta(days=365)).strftime('%Y%m%d')  # 1年数据
     end_date = end_date if end_date else datetime.now().strftime('%Y%m%d')
 
-    # 已存在数据库的票
-    sql = f"select ts_code from stock_daily sbi group by ts_code"
-    print(sql)
-    df = MysqlEngine.query_to_dataframe(sql)
-    ts_codes = df['ts_code'].unique().tolist()
-    # 去重
-    new_list = list(filter(lambda x: x not in ts_codes, stock_list))
+    # # 已存在数据库的票
+    # sql = f"select ts_code from stock_daily sbi group by ts_code"
+    # print(sql)
+    # df = MysqlEngine.query_to_dataframe(sql)
+    # ts_codes = df['ts_code'].unique().tolist()
+    # # 去重
+    # new_list = list(filter(lambda x: x not in ts_codes, stock_list))
 
     times = 1
-    for code in new_list:
+    for code in stock_list:
         # 查询接口
         df = pro.daily(
             ts_code=code,
